@@ -18,16 +18,17 @@ async function bootstrap() {
   // Enable global validation
   app.useGlobalPipes(new ValidationPipe());
 
-  // Configure Swagger
-  const options = new DocumentBuilder()
-    .setTitle('Umurava Skills Challenge API Documentation')
-    .setDescription('Made by CyberMarineTeam')
-    .setVersion('1.0')
-    .addServer(`http://localhost:${process.env.PORT || 10000}/`, 'Local environment')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  if (process.env.NODE_ENV !== 'production') {
+    const options = new DocumentBuilder()
+      .setTitle('Umurava Skills Challenge API Documentation')
+      .setDescription('Made by CyberMarineTeam')
+      .setVersion('1.0')
+      .addServer(`http://localhost:${process.env.PORT || 10000}/`, 'Local environment')
+      .build();
+  
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('api', app, document);
+  }
 
   // Get the port from environment variables
   const port = process.env.PORT || 10000;
