@@ -77,7 +77,7 @@ export class ChallengeController {
     } catch (err: any) {
       console.log(err);
 
-      return response.status(HttpStatus.BAD_REQUEST).json({
+      return response.status(400).json({
         statusCode: 400,
         message: 'Error: Challenge not created!',
         error: 'Bad Request',
@@ -107,10 +107,8 @@ export class ChallengeController {
         userId,
         `Challenge called ${Challenge.title} has been successfully updated`,
       );
-       response.status(200).json({
-        message: 'Challenge has been successfully updated',
-        Challenge,
-      });
+       response.status(200).json( Challenge,
+      );
     } catch (err: any) {
       return "Failed to update the challenge";
     }
