@@ -10,7 +10,7 @@ async function bootstrap() {
 
   // Determine allowed origins dynamically
   const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? ['https://tal-manage.netlify.app'] // Production frontend
+    ? ['https://tal-manage.netlify.app', 'https://skill-challenge-ui-r7bc.vercel.app'] // Production frontend
     : ['http://localhost:3000']; // Local development frontend
 
   // Set up CORS
