@@ -6,11 +6,16 @@ import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
- 
+  // Determine allowed origins dynamically
+  const allowedOrigins = process.env.NODE_ENV === 'production'
+    ? ['https://tal-manage.netlify.app'] // Production frontend
+    : ['http://localhost:3000']; // Local development frontend
+
   // Set up CORS
   app.enableCors({
-    origin: ['http://localhost:3000'], 
+    origin: allowedOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -18,25 +23,26 @@ async function bootstrap() {
   // Enable global validation
   app.useGlobalPipes(new ValidationPipe());
 
-  if (process.env.NODE_ENV !== 'production') {
-    const options = new DocumentBuilder()
-      .setTitle('Umurava Skills Challenge API Documentation')
-      .setDescription('Made by CyberMarineTeam')
-      .setVersion('1.0')
-      .addServer(`http://localhost:${process.env.PORT || 10000}/`, 'Local environment')
-      .build();
-  
-    const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('api', app, document);
-  }
+  // Set up Swagger API documentation for all environments
+  const serverUrl = process.env.NODE_ENV === 'production'
+    ? `https://skills-challenge.onrender.com/`
+    : `http://localhost:${process.env.PORT || 10000}/`;
+
+  const options = new DocumentBuilder()
+    .setTitle('Umurava Skills Challenge API Documentation')
+    .setDescription('Made by CyberMarineTeam')
+    .setVersion('1.0')
+    .addServer(serverUrl, process.env.NODE_ENV === 'production' ? 'Production' : 'Local environment')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
 
   // Get the port from environment variables
   const port = process.env.PORT || 10000;
-
-  console.log(`🚀 Server running on http://localhost:${port}/api`);
+  console.log(`🚀 Server running on ${serverUrl}api`);
 
   // Start the server
-  // await app.listen(port);
   await app.listen(port, '0.0.0.0');
 }
 
